@@ -12,7 +12,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("171d1ae90e46978eb9c342be6658d937a83aaa45997b1d7af7657546cae5985b" default))
- '(package-selected-packages '(auto-complete cmake-mode atom-one-dark-theme)))
+ '(package-selected-packages '(cnfonts auto-complete cmake-mode atom-one-dark-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -23,7 +23,7 @@
 ;; custom theme
 (load-theme 'atom-one-dark t)
 
-;; font setting
+;; default editor font setting
 (set-frame-font "Monaco 11" nil t)
 
 ;; ruler 80
@@ -31,3 +31,10 @@
 
 ;; set C indentation
 (setq c-default-style "linux" c-basic-offset 8)
+
+;; cnfonts
+(require 'cnfonts)
+;; auto enable cnfonts when emacs start up.
+(cnfonts-mode 1)
+(setq cfs-profiles
+    '("program" "org-mode" "read-book"))
