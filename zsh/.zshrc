@@ -1,6 +1,7 @@
 #!/bin/zsh
 
 # Starry Wang <hxstarrys@gmail.com> (https://starry-s.moe)
+# License: Apache - 2.0
 # Refer: alynx-zsh-confg <https://github.com/AlynxZhou/alynx-zsh-config>
 
 # Set http proxy server.
