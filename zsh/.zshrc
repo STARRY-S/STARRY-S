@@ -239,7 +239,7 @@ function left_prompt_data() {
     if [[ -n "${SSH_TTY}" || -n "${SSH_CLIENT}" ]]; then
         # Set color to green for SSH connected mode.
         DATA="%F{green}%n%f@%F{green}%m%f"
-    elif
+    fi
     print -n "${DATA}"
     return 0
 }
