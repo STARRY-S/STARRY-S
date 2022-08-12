@@ -276,6 +276,11 @@ case "${TERM}" in
     ;;
 esac
 
+# Add `bin` folder in HOME to path.
+if [[ -d "${HOME}/bin" ]]; then
+    export PATH="${PATH}:${HOME}/bin"
+fi
+
 # Alias.
 # Colorize ls command.
 if [[ "$(command uname)" != "Darwin" && -f "/bin/ls" ]]; then
@@ -373,7 +378,7 @@ if [[ "$(command uname)" == "Linux" ]]; then
     fi
 
     # Kubernetes.
-    if [[ -f "/usr/bin/kubectl" || -f "/usr/local/bin/kubectl" ]]; then
+    if [[ -n "$(command whereis kubectl | cut -d ":" -f 2)" ]]; then
         source <(kubectl completion zsh)
     fi
 fi
@@ -399,7 +404,7 @@ if [[ "$(command uname)" == "Darwin" ]]; then
     fi
 
     # Kubernetes.
-    if [[ -f "/opt/homebrew/bin/kubectl" || -f "/usr/local/bin/kubectl" ]]; then
+    if [[ -n "$(command whereis kubectl | cut -d ":" -f 2)" ]]; then
         source <(kubectl completion zsh)
     fi
 
@@ -407,11 +412,6 @@ if [[ "$(command uname)" == "Darwin" ]]; then
     if [[ -d "/Applications/Visual Studio Code.app/Contents/Resources/app/bin" ]]; then
         export PATH="${PATH}:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
     fi
-fi
-
-# Add `bin` folder in HOME to path.
-if [[ -d "${HOME}/bin" ]]; then
-    export PATH="${PATH}:${HOME}/bin"
 fi
 
 # Auto create `.zcustom` files and load it.
