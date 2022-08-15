@@ -360,9 +360,14 @@ fi
 # Settings for Linux.
 if [[ "$(command uname)" == "Linux" ]]; then
     # Settings for golang.
-    if [[ -f "/usr/bin/go" && -d "${HOME}/go" ]]; then
-        export GOPATH="${HOME}/go"
-        export PATH="${PATH}:${GOPATH}/bin"
+    if [[ -f "/usr/bin/go" || -d "/usr/local/go" ]]; then
+        if [[ -d "/usr/local/go" ]]; then
+            export PATH="$PATH:/usr/local/go/bin"
+        fi
+        if [[ -d "${HOME}/go" ]]; then
+            export GOPATH="${HOME}/go"
+            export PATH="${PATH}:${GOPATH}/bin"
+        fi
     fi
 
     # Set neovim to default editor.
@@ -374,6 +379,9 @@ if [[ "$(command uname)" == "Linux" ]]; then
 
     # Kubernetes.
     if [[ -f "/usr/bin/kubectl" || -f "/usr/local/bin/kubectl" || -f "/var/lib/rancher/rke2/bin/kubectl" ]]; then
+        if [[ -f "/var/lib/rancher/rke2/bin/kubectl" ]]; then
+            export PATH="$PATH:/var/lib/rancher/rke2/bin"
+        fi
         source <(kubectl completion zsh)
     fi
 fi
