@@ -11,7 +11,7 @@ local HTTP_PROXY_PORT="8010"
 # Set zsh plugin path.
 local ZSH_PLUGIN_PATH=""
 # Set GPG tty device
-export GPG_TTY=$(tty)
+local CUSTOM_GPG_TTY=""
 
 # Fix bug of new tab always starts shell with ~.
 # https://bugs.launchpad.net/ubuntu-gnome/+bug/1193993
@@ -181,7 +181,7 @@ local result_status=%(?::":%F{red}%?%f")
 
 # OS detection.
 function os_status() {
-    if [[ -n ${SSH_CONNECTION} ]]; then
+    if [[ -n "${SSH_CONNECTION}" ]]; then
         print -n "%F{blue}(ssh)%f%F{yellow}$(command uname)%f:"
     else
         print -n "%F{yellow}$(command uname)%f:"
@@ -207,9 +207,9 @@ function battery_status() {
 # Git status.
 function git_status() {
     # Check for git repo.
-    if [[ -n $(command git rev-parse --short HEAD 2> /dev/null) ]]; then
+    if [[ -n "$(command git rev-parse --short HEAD 2> /dev/null)" ]]; then
         # Check for dirty or not.
-        if [[ -n $(command git status --porcelain --ignore-submodules=dirty 2> /dev/null | command tail -n1) ]]; then
+        if [[ -n "$(command git status --porcelain --ignore-submodules=dirty 2> /dev/null | command tail -n1)" ]]; then
             print -n ":%F{blue}$(command git symbolic-ref --short HEAD 2> /dev/null)%f%F{yellow}*%f"
             return 1
         else
@@ -350,7 +350,7 @@ if [[ -z ${ZSH_PLUGIN_PATH} ]]; then
 fi
 
 # Load zsh plugins.
-if [[ -n ${ZSH_PLUGIN_PATH} ]]; then
+if [[ -n "${ZSH_PLUGIN_PATH}" ]]; then
     # Syntax highlight.
     if [[ -f "${ZSH_PLUGIN_PATH}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
         source ${ZSH_PLUGIN_PATH}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -425,6 +425,13 @@ fi
 # Add `bin` folder in HOME to path.
 if [[ -d "${HOME}/bin" ]]; then
     export PATH="${PATH}:${HOME}/bin"
+fi
+
+# Load GPG_TTY
+if [[ -f "/usr/bin/gpg" || -f "/opt/homebrew/bin/gpg" ]]; then
+    if [[ -n "${CUSTOM_GPG_TTY}" ]]; then
+        export GPG_TTY=${CUSTOM_GPG_TTY}
+    fi
 fi
 
 # Auto create `.zcustom` files and load it.
