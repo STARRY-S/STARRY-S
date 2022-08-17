@@ -10,6 +10,8 @@ local HTTP_PROXY_ADDR="127.0.0.1"
 local HTTP_PROXY_PORT="8010"
 # Set zsh plugin path.
 local ZSH_PLUGIN_PATH=""
+# Set GPG tty device
+export GPG_TTY=$(tty)
 
 # Fix bug of new tab always starts shell with ~.
 # https://bugs.launchpad.net/ubuntu-gnome/+bug/1193993
