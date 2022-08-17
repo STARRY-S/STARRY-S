@@ -45,6 +45,9 @@ bindkey "\eOF" end-of-line
 bindkey "\e[5~" up-line-or-history
 bindkey "\e[6~" down-line-or-history
 
+# Fix return key shows ^M
+stty sane
+
 # Add `proxychains -q` via hit `Esc` three times.
 if [[ -f "/usr/bin/proxychains" || -f "/usr/bin/proxychains4" || -f "/opt/homebrew/bin/proxychains4" ]]; then
     function add_proxychains() {
