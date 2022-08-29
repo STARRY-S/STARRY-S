@@ -284,9 +284,9 @@ esac
 # Alias.
 # Colorize ls command.
 if [[ "$(command uname)" != "Darwin" && -f "/bin/ls" ]]; then
-    alias ls="ls --color=auto"
+    alias ls="ls --color=auto -h"
 else
-    alias ls="ls -G"
+    alias ls="ls -G -h"
 fi
 
 # Colorize grep command.
