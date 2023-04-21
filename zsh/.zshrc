@@ -1,9 +1,5 @@
 #!/bin/zsh
 
-# Starry Wang <hxstarrys@gmail.com> (https://starry-s.moe)
-# License: Apache - 2.0
-# Refer: alynx-zsh-confg <https://github.com/AlynxZhou/alynx-zsh-config>
-
 # Set http proxy server.
 local HTTP_PROXY_ADDR="127.0.0.1"
 # Set http proxy port.
@@ -344,7 +340,7 @@ if [[ -z ${ZSH_PLUGIN_PATH} ]]; then
             ZSH_PLUGIN_PATH="/usr/share"
         fi
     elif [[ "$(command uname)" == "Darwin" ]]; then
-        # MacOS.
+        # macOS.
         ZSH_PLUGIN_PATH="/opt/homebrew/share"
     fi
 fi
@@ -391,7 +387,7 @@ if [[ "$(command uname)" == "Linux" ]]; then
     fi
 fi
 
-# Settings for MacOS.
+# Settings for macOS.
 if [[ "$(command uname)" == "Darwin" ]]; then
     # Add homebrew bin folder to path.
     if [[ -d "/opt/homebrew/bin" ]]; then
@@ -440,4 +436,23 @@ if [[ -f "${HOME}/.zcustom" ]]; then
 else
     touch "${HOME}/.zcustom"
     echo "#!/bin/zsh" > "${HOME}/.zcustom"
+fi
+
+
+# kubectl command aliases
+if type kubectl &> /dev/null; then
+    alias k="kubectl"
+    alias kn="kubectl --namespace"
+    alias kncs="kubectl --namespace=cattle-system"
+    alias kl="kubectl logs"
+    alias kncsl="kubectl --namespace=cattle-system logs"
+fi
+
+# docker command aliases
+if type docker &> /dev/null; then
+    alias d="docker"
+    alias dps="docker ps -a"
+    alias di="docker images"
+    alias dk="docker kill"
+    alias drm="docker rm"
 fi
