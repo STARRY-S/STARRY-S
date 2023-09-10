@@ -300,7 +300,7 @@ fi
 
 # HTTP_PROXY variable short name.
 if [[ -n "${HTTP_PROXY_ADDR}" && -n "${HTTP_PROXY_PORT}" ]]; then
-    alias proxyenv="http_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" https_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" ftp_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" rsync_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" no_proxy=\"localhost,127.0.0.1,10.10.10.1,localaddress,.localdomain\""
+    alias proxyenv="http_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" https_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" ftp_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" rsync_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" no_proxy=\"localhost,127.0.0.1,10.1.1.1,localaddress,.localdomain\""
 
     # Add `proxyenv` via hit `Esc` twice.
     function add_proxyenv() {
@@ -385,6 +385,9 @@ if [[ "$(command uname)" == "Linux" ]]; then
         fi
         source <(kubectl completion zsh)
     fi
+
+    # Libraries
+    export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
 fi
 
 # Settings for macOS.
@@ -434,25 +437,19 @@ fi
 if [[ -f "${HOME}/.zcustom" ]]; then
     source "${HOME}/.zcustom"
 else
-    touch "${HOME}/.zcustom"
     echo "#!/bin/zsh" > "${HOME}/.zcustom"
+    echo "" >> "${HOME}/.zcustom"
 fi
-
 
 # kubectl command aliases
 if type kubectl &> /dev/null; then
     alias k="kubectl"
     alias kn="kubectl --namespace"
     alias kncs="kubectl --namespace=cattle-system"
-    alias kl="kubectl logs"
-    alias kncsl="kubectl --namespace=cattle-system logs"
+    alias kncds="kubectl --namespace=cattle-data-system"
 fi
 
 # docker command aliases
 if type docker &> /dev/null; then
     alias d="docker"
-    alias dps="docker ps -a"
-    alias di="docker images"
-    alias dk="docker kill"
-    alias drm="docker rm"
 fi
