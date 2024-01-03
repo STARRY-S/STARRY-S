@@ -345,18 +345,6 @@ if [[ -z ${ZSH_PLUGIN_PATH} ]]; then
     fi
 fi
 
-# Load zsh plugins.
-if [[ -n "${ZSH_PLUGIN_PATH}" ]]; then
-    # Syntax highlight.
-    if [[ -f "${ZSH_PLUGIN_PATH}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
-        source ${ZSH_PLUGIN_PATH}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-    fi
-    # Autosuggestions.
-    if [[ -f "${ZSH_PLUGIN_PATH}/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-        source ${ZSH_PLUGIN_PATH}/zsh-autosuggestions/zsh-autosuggestions.zsh
-    fi
-fi
-
 # Enviroments.
 # Settings for Linux.
 if [[ "$(command uname)" == "Linux" ]]; then
@@ -446,10 +434,24 @@ if type kubectl &> /dev/null; then
     alias k="kubectl"
     alias kn="kubectl --namespace"
     alias kncs="kubectl --namespace=cattle-system"
+    alias knks="kubectl --namespace=kube-system"
     alias kncds="kubectl --namespace=cattle-data-system"
 fi
 
 # docker command aliases
 if type docker &> /dev/null; then
     alias d="docker"
+fi
+
+################################################################################
+# Load zsh plugins in the end.
+if [[ -n "${ZSH_PLUGIN_PATH}" ]]; then
+    # Syntax highlight.
+    if [[ -f "${ZSH_PLUGIN_PATH}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+        source ${ZSH_PLUGIN_PATH}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    fi
+    # Autosuggestions.
+    if [[ -f "${ZSH_PLUGIN_PATH}/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+        source ${ZSH_PLUGIN_PATH}/zsh-autosuggestions/zsh-autosuggestions.zsh
+    fi
 fi
