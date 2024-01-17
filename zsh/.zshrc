@@ -291,12 +291,16 @@ if [[ -f "/usr/bin/grep" ]]; then
 fi
 
 # Use nvim as vim if neovim installed.
-if [[ -f "/bin/nvim" || -f "/opt/homebrew/bin/nvim" ]]; then
+if command -v nvim &> /dev/null; then
     alias vi="nvim"
     alias vim="nvim"
 elif [[ -f "/bin/vim" ]]; then
     alias vi="vim"
 fi
+
+alias ll='ls -al'
+alias dfh='df -h'
+alias duh='du -h'
 
 # HTTP_PROXY variable short name.
 if [[ -n "${HTTP_PROXY_ADDR}" && -n "${HTTP_PROXY_PORT}" ]]; then
@@ -375,7 +379,11 @@ if [[ "$(command uname)" == "Linux" ]]; then
     fi
 
     # Libraries
-    export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
+    if [[ -z "${LD_LIBRARY_PATH}" ]]; then
+        export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
+    else
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib:/usr/lib:/usr/local/lib
+    fi
 fi
 
 # Settings for macOS.
@@ -426,7 +434,12 @@ if [[ -f "${HOME}/.zcustom" ]]; then
     source "${HOME}/.zcustom"
 else
     echo "#!/bin/zsh" > "${HOME}/.zcustom"
-    echo "" >> "${HOME}/.zcustom"
+    echo >> "${HOME}/.zcustom"
+    echo >> "${HOME}/.zcustom"
+fi
+
+if [[ -f "${HOME}/.alias" ]]; then
+    source "${HOME}/.zcustom"
 fi
 
 # kubectl command aliases
@@ -441,6 +454,8 @@ fi
 # docker command aliases
 if type docker &> /dev/null; then
     alias d="docker"
+    alias dps="docker ps"
+    alias dpsa="docker ps -a"
 fi
 
 ################################################################################
