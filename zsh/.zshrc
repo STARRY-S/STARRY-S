@@ -317,15 +317,21 @@ if [[ -n "${HTTP_PROXY_ADDR}" && -n "${HTTP_PROXY_PORT}" ]]; then
 fi
 
 # A beautiful git log.
-if [[ -f "/bin/git" ]]; then
+if command -v git &> /dev/null; then
     git config --global alias.graph "log --graph --abbrev-commit --decorate --date=iso8601 --format=format:'%C(bold blue)%h%C(reset) %C(white)%s%C(reset) %C(dim white)<%ae>%C(reset) %C(bold green)(%ad)%C(reset) %C(auto)%d%C(reset)'"
 fi
 
 # Systemd.
-if [[ -f "/bin/systemctl" ]]; then
+if command -v systemctl &> /dev/null; then
     # Let the pager away.
     alias systemctl="systemctl --no-pager --full"
     alias journalctl="journalctl --no-pager --full"
+
+    alias sctl="systemctl"
+    alias sctle="systemctl enable"
+    alias sctlen="systemctl enable --now"
+    alias sctls="systemctl status"
+    alias sctlr="systemctl restart"
 fi
 
 # Set proxychains.
@@ -353,7 +359,7 @@ fi
 # Settings for Linux.
 if [[ "$(command uname)" == "Linux" ]]; then
     # Settings for golang.
-    if [[ -f "/usr/bin/go" || -d "/usr/local/go" ]]; then
+    if command -v go &> /dev/null; then
         if [[ -d "/usr/local/go" ]]; then
             export PATH="$PATH:/usr/local/go/bin"
         fi
@@ -364,7 +370,7 @@ if [[ "$(command uname)" == "Linux" ]]; then
     fi
 
     # Set neovim to default editor.
-    if [[ -f "/usr/bin/nvim" ]]; then
+    if command -v nvim &> /dev/null; then
         export EDITOR="nvim"
     else
         export EDITOR="vim"
@@ -419,7 +425,7 @@ fi
 
 # Add `bin` folder in HOME to path.
 if [[ -d "${HOME}/bin" ]]; then
-    export PATH="${PATH}:${HOME}/bin"
+    export PATH="${HOME}/bin:${PATH}"
 fi
 
 # Load GPG_TTY
@@ -434,7 +440,6 @@ if [[ -f "${HOME}/.zcustom" ]]; then
     source "${HOME}/.zcustom"
 else
     echo "#!/bin/zsh" > "${HOME}/.zcustom"
-    echo >> "${HOME}/.zcustom"
     echo >> "${HOME}/.zcustom"
 fi
 
@@ -456,6 +461,8 @@ if type docker &> /dev/null; then
     alias d="docker"
     alias dps="docker ps"
     alias dpsa="docker ps -a"
+    alias dk="docker kill"
+    alias drm="docker rm"
 fi
 
 ################################################################################

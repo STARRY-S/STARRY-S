@@ -1,0 +1,11 @@
+Host *
+    ServerAliveInterval 30
+    ServerAliveCountMax 3
+    KexAlgorithms curve25519-sha256,ecdh-sha2-nistp521
+    HostKeyAlgorithms=+ssh-rsa
+
+Host github.com
+    Hostname ssh.github.com
+    Port 443
+    User git
+    ProxyCommand nc -v -x 127.0.0.1:1080 %h %p
