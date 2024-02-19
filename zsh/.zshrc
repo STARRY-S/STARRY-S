@@ -384,6 +384,11 @@ if [[ "$(command uname)" == "Linux" ]]; then
         source <(kubectl completion zsh)
     fi
 
+    # sbin.
+    if [[ -d "/sbin" ]]; then
+        export PATH="$PATH:/sbin"
+    fi
+
     # Libraries
     if [[ -z "${LD_LIBRARY_PATH}" ]]; then
         export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
