@@ -1,17 +1,20 @@
 <domain type="kvm">
+  <!-- 虚拟机名称，不能重复 -->
   <name>ubuntu-2</name>
-  <uuid>a5233fcd-2ba2-412c-911c-7291aa21ccb7</uuid>
+  <!-- 虚拟机 UUID，不能重复 -->
+  <uuid>734cc5bb-2db3-4a2b-85c6-bbb0967db399</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
       <libosinfo:os id="http://ubuntu.com/ubuntu/20.04"/>
     </libosinfo:libosinfo>
   </metadata>
-  <memory unit="MiB">2048</memory>
-  <currentMemory unit="MiB">2048</currentMemory>
+  <memory unit="MiB">4096</memory>
+  <currentMemory unit="MiB">4096</currentMemory>
   <vcpu placement="static">2</vcpu>
   <os>
     <type arch="x86_64" machine="q35">hvm</type>
-    <boot dev="cdrom"/>
+    <!--  启动顺序，安装系统后需将 cdrom 注释掉 -->
+    <!-- <boot dev="cdrom"/> -->
     <boot dev="hd"/>
   </os>
   <features>
@@ -36,25 +39,31 @@
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type="file" device="disk">
       <driver name="qemu" type="qcow2" discard="unmap"/>
-      <source file="/home/starry.wang/libvirt/ubuntu-2.qcow2"/>
+      <!-- qcow2 镜像位置，按需修改 -->
+      <source file="/var/lib/libvirt/images/ubuntu-2.qcow2"/>
       <target dev="vda" bus="virtio"/>
       <address type="pci" domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
     </disk>
     <disk type="file" device="cdrom">
       <driver name="qemu" type="raw"/>
-      <source file="/home/starry.wang/libvirt/ubuntu.iso" index="1"/>
+      <!-- Userdata -->
+      <source file="/var/lib/libvirt/images/userdata-2.img" index="1"/>
       <backingStore/>
       <target dev="sda" bus="sata"/>
       <readonly/>
       <alias name="sata0-0-0"/>
       <address type="drive" controller="0" bus="0" target="0" unit="0"/>
     </disk>
+    <!-- VNC，公网远程访问需改为 0.0.0.0 -->
+    <graphics type='vnc' port='5902' listen='127.0.0.1' keymap='en-us'/>
     <interface type="network">
-      <mac address="52:54:00:4f:fd:ab"/>
-      <source network="default"/>
+      <!-- MAC 地址，不同的虚拟机不能重复 -->
+      <mac address="aa:bb:cc:dd:fd:02"/>
+      <source network="default-1"/>
       <model type="virtio"/>
       <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
     </interface>
+    <!-- 下面的配置拷贝自 virt-manager -->
     <controller type="pci" index="0" model="pcie-root"/>
     <controller type="pci" index="1" model="pcie-root-port">
       <model name="pcie-root-port"/>
@@ -139,10 +148,6 @@
       <target type="virtio" name="org.qemu.guest_agent.0"/>
       <address type="virtio-serial" controller="0" bus="0" port="1"/>
     </channel>
-    <channel type="spicevmc">
-      <target type="virtio" name="com.redhat.spice.0"/>
-      <address type="virtio-serial" controller="0" bus="0" port="2"/>
-    </channel>
     <input type="tablet" bus="usb">
       <address type="usb" bus="0" port="1"/>
     </input>
@@ -150,13 +155,6 @@
       <model type="virtio" heads="1" primary="yes"/>
       <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
     </video>
-    <graphics type='vnc' port='5962' listen='0.0.0.0' keymap='en-us'/>
-    <redirdev bus="usb" type="spicevmc">
-      <address type="usb" bus="0" port="2"/>
-    </redirdev>
-    <redirdev bus="usb" type="spicevmc">
-      <address type="usb" bus="0" port="3"/>
-    </redirdev>
     <memballoon model="virtio">
       <address type="pci" domain="0x0000" bus="0x05" slot="0x00" function="0x0"/>
     </memballoon>

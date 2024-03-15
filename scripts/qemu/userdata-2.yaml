@@ -1,0 +1,38 @@
+#cloud-config
+password: StrongPassword
+chpasswd: { expire: False }
+ssh_pwauth: True
+hostname: ubuntu-2
+ssh_authorized_keys: []
+bootcmd:
+ - dhclient
+runcmd:
+ - echo 192.168.122.101 ubuntu-1 >> /etc/hosts
+ - echo 192.168.122.102 ubuntu-2 >> /etc/hosts
+ - echo 192.168.122.103 ubuntu-3 >> /etc/hosts
+ - |
+  echo "[Match]
+  Name=en*
+
+  [Network]
+  Address=192.168.122.102/24
+  Gateway=192.168.122.1
+  DNS=8.8.8.8" > /etc/systemd/network/10-default.network
+
+ - |
+  # Install docker
+  sudo apt-get -y update
+  sudo apt-get -y install ca-certificates curl
+  sudo install -y -m 0755 -d /etc/apt/keyrings
+  sudo mkdir -p /etc/apt/keyrings/
+  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+  # Add the repository to Apt sources:
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt-get -y update
+  VERSION_STRING='5:24.0.9-1~ubuntu.20.04~focal'
+  sudo apt-get -y install docker-ce=$VERSION_STRING docker-ce-cli=$VERSION_STRING containerd.io docker-buildx-plugin docker-compose-plugin

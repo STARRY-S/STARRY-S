@@ -3,7 +3,7 @@
 
 set -x
 
-gcloud compute instances create starry-kvm-1 \
+gcloud compute instances create starry-kvm-ubuntu-2004-1 \
   --enable-nested-virtualization \
   --zone="asia-northeast1-b"  \
   --min-cpu-platform="Intel Haswell" \
