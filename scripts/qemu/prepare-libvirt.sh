@@ -16,6 +16,7 @@ echo "Initializing libvirt default network"
 DEFAULT_NETWORK_UUID=$(sudo virsh net-dumpxml default | grep '<uuid>' | sed -e 's/^[[:space:]]*//')
 DEFAULT_NETWORK_UUID=${DEFAULT_NETWORK_UUID##'<uuid>'}
 DEFAULT_NETWORK_UUID=${DEFAULT_NETWORK_UUID%%'</uuid>'}
+cp default-network-template.xml default-network.xml
 sed -i "s/DEFAULT_NETWORK_UUID/${DEFAULT_NETWORK_UUID}/g" default-network.xml
 echo "Update default network XML:"
 cat default-network.xml
