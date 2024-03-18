@@ -1,5 +1,6 @@
 #!/bin/bash
 #
+# Script to launch KVM instance on GCP.
 
 set -x
 

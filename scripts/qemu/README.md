@@ -1,4 +1,10 @@
-# Ubuntu 20.04 libvirt KVM
+## KVM instances on GCP
+
+Use [gcp-create-nested.sh](./gcp-create-nested.sh) to launch KVM instance on GCP.
+
+Edit the `--source-instance-template` if needed.
+
+## Ubuntu 20.04 libvirt KVM
 
 Run following script to install `virt-manager` and setup 3 ubuntu KVM instances.
 
