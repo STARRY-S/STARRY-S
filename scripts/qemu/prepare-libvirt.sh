@@ -11,11 +11,16 @@ LIBVIRT_PATH="/var/lib/libvirt"
 sudo apt-get update
 sudo apt-get -y install virt-manager cloud-image-utils
 
-echo "Initializing libvirt default-1 network"
-sudo virsh net-destroy default || true
-sudo virsh net-define ./default-1-network.xml
-sudo virsh net-autostart default-1 || true
-sudo virsh net-start default-1 || true
+echo "Initializing libvirt default network"
+
+DEFAULT_NETWORK_UUID=$(sudo virsh net-dumpxml default | grep '<uuid>' | sed -e 's/^[[:space:]]*//')
+DEFAULT_NETWORK_UUID=${DEFAULT_NETWORK_UUID##'<uuid>'}
+DEFAULT_NETWORK_UUID=${DEFAULT_NETWORK_UUID%%'</uuid>'}
+sed -i "s/DEFAULT_NETWORK_UUID/${DEFAULT_NETWORK_UUID}/g" default-network.xml
+echo "Update default network XML:"
+sudo virsh net-define ./default-network.xml
+sudo virsh net-autostart default || true
+sudo virsh net-start default || true
 
 if ! grep -q '192.168.122.101' /etc/hosts; then
     sudo bash -c "echo '192.168.122.101   ubuntu-1' >> /etc/hosts"

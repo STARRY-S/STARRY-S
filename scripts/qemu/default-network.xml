@@ -1,8 +1,8 @@
 <network>
-  <name>default-1</name>
-  <uuid>e27102f7-4193-4523-8a45-c0513319c7a1</uuid>
+  <name>default</name>
+  <uuid>DEFAULT_NETWORK_UUID</uuid>
   <forward mode='nat'/>
-  <bridge name='virbr1' stp='on' delay='0'/>
+  <bridge name='virbr0' stp='on' delay='0'/>
   <mac address='aa:bb:cc:dd:fd:aa'/>
   <ip address='192.168.122.1' netmask='255.255.255.0'>
     <dhcp>
@@ -10,6 +10,8 @@
       <host mac="aa:bb:cc:dd:fd:01" name="ubuntu-1" ip="192.168.122.101"/>
       <host mac="aa:bb:cc:dd:fd:02" name="ubuntu-2" ip="192.168.122.102"/>
       <host mac="aa:bb:cc:dd:fd:03" name="ubuntu-3" ip="192.168.122.103"/>
+      <host mac="aa:bb:cc:dd:fd:04" name="ubuntu-4" ip="192.168.122.104"/>
+      <host mac="aa:bb:cc:dd:fd:05" name="ubuntu-5" ip="192.168.122.105"/>
     </dhcp>
   </ip>
 </network>

@@ -59,7 +59,7 @@
     <interface type="network">
       <!-- MAC 地址，不同的虚拟机不能重复 -->
       <mac address="aa:bb:cc:dd:fd:03"/>
-      <source network="default-1"/>
+      <source network="default"/>
       <model type="virtio"/>
       <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
     </interface>
