@@ -23,6 +23,7 @@ cat default-network.xml
 
 sudo virsh net-define ./default-network.xml
 sudo virsh net-autostart default || true
+sudo virsh net-destroy default || true
 sudo virsh net-start default || true
 
 if ! grep -q '192.168.122.101' /etc/hosts; then
@@ -42,13 +43,17 @@ if [[ -e 'ubuntu.img' ]]; then
     sudo rm ubuntu.img
 fi
 sudo wget $CLOUD_IMG -O ubuntu.img
-sudo cp ubuntu.img ubuntu-1.qcow2
-sudo cp ubuntu.img ubuntu-2.qcow2
-sudo cp ubuntu.img ubuntu-3.qcow2
-echo "Resize ubuntu qcow2 disk image to 40G"
-sudo qemu-img resize ubuntu-1.qcow2 40G
-sudo qemu-img resize ubuntu-2.qcow2 40G
-sudo qemu-img resize ubuntu-3.qcow2 40G
+if [[ -e "ubuntu-1.qcow2" ]]; then
+    echo "qcow2 image already exists in $LIBVIRT_PATH/images"
+else
+    sudo cp ubuntu.img ubuntu-1.qcow2
+    sudo cp ubuntu.img ubuntu-2.qcow2
+    sudo cp ubuntu.img ubuntu-3.qcow2
+    echo "Resize ubuntu qcow2 disk image to 40G"
+    sudo qemu-img resize ubuntu-1.qcow2 40G
+    sudo qemu-img resize ubuntu-2.qcow2 40G
+    sudo qemu-img resize ubuntu-3.qcow2 40G
+fi
 
 cd $WORKDIR
 echo "Create user-data"
