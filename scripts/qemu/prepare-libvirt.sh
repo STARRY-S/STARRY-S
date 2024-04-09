@@ -21,9 +21,9 @@ sed -i "s/DEFAULT_NETWORK_UUID/${DEFAULT_NETWORK_UUID}/g" default-network.xml
 echo "Update default network XML:"
 cat default-network.xml
 
+sudo virsh net-destroy default || true
 sudo virsh net-define ./default-network.xml
 sudo virsh net-autostart default || true
-sudo virsh net-destroy default || true
 sudo virsh net-start default || true
 
 if ! grep -q '192.168.122.101' /etc/hosts; then
