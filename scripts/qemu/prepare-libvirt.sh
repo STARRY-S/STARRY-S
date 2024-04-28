@@ -32,7 +32,12 @@ if ! grep -q '192.168.122.101' /etc/hosts; then
     sudo bash -c "echo '192.168.122.103   ubuntu-3' >> /etc/hosts"
 fi
 
+echo "Initializing libvirt vtpm secret"
+sudo virsh secret-define ./vtpm-secret.xml
+MYSECRET=`printf %s "open sesame" | base64`
+sudo virsh secret-set-value 9a2e9101-6bf8-42e2-885b-ab26a4c33ab7 $MYSECRET
 sudo mkdir -p $LIBVIRT_PATH/images
+sudo mkdir -p $LIBVIRT_PATH/nvram # UEFI boot nvram
 # Grant read permission for other users
 sudo chmod -R 755 $LIBVIRT_PATH
 cd $LIBVIRT_PATH/images
