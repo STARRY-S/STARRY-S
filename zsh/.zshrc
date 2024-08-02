@@ -290,6 +290,11 @@ if [[ -f "/usr/bin/grep" ]]; then
     alias grep="grep --color=auto"
 fi
 
+# Colorize ip command.
+if [[ -f "/usr/bin/ip" ]]; then
+    alias ip='ip --color=auto'
+fi
+
 # Use nvim as vim if neovim installed.
 if command -v nvim &> /dev/null; then
     alias vi="nvim"
@@ -459,6 +464,7 @@ if type kubectl &> /dev/null; then
     alias kncs="kubectl --namespace=cattle-system"
     alias knks="kubectl --namespace=kube-system"
     alias kncds="kubectl --namespace=cattle-data-system"
+    alias kncfn="kubectl --namespace=cattle-flat-network"
 fi
 
 # docker command aliases
