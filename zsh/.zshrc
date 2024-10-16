@@ -462,6 +462,7 @@ if type kubectl &> /dev/null; then
     alias k="kubectl"
     alias kn="kubectl --namespace"
     alias kncs="kubectl --namespace=cattle-system"
+    alias knfd="kubectl --namespace=fleet-default"
     alias knks="kubectl --namespace=kube-system"
     alias kncds="kubectl --namespace=cattle-data-system"
     alias kncfn="kubectl --namespace=cattle-flat-network"
