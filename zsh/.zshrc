@@ -3,7 +3,7 @@
 # Set http proxy server.
 local HTTP_PROXY_ADDR="127.0.0.1"
 # Set http proxy port.
-local HTTP_PROXY_PORT="8010"
+local HTTP_PROXY_PORT="8808"
 # Set zsh plugin path.
 local ZSH_PLUGIN_PATH=""
 # Set GPG tty device
@@ -475,6 +475,16 @@ if type docker &> /dev/null; then
     alias dpsa="docker ps -a"
     alias dk="docker kill"
     alias drm="docker rm"
+fi
+
+# podman command aliases
+if type podman &> /dev/null; then
+    alias p="podman"
+    alias pp="podman pod"
+    alias pps="podman ps"
+    alias ppsa="podman ps -a"
+    alias pk="podman kill"
+    alias prm="podman rm"
 fi
 
 ################################################################################
