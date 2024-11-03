@@ -285,6 +285,11 @@ else
     alias ls="ls -G -h"
 fi
 
+# Colorize diff command.
+if command -v diff &> /dev/null; then
+    alias diff="diff --color=auto"
+fi
+
 # Colorize grep command.
 if [[ -f "/usr/bin/grep" ]]; then
     alias grep="grep --color=auto"
@@ -444,6 +449,10 @@ if [[ -f "/usr/bin/gpg" || -f "/opt/homebrew/bin/gpg" ]]; then
         export GPG_TTY=${CUSTOM_GPG_TTY}
     fi
 fi
+
+# Color man page
+export MANPAGER="less -R --use-color -Dd+r -Du+b"
+export MANROFFOPT="-P -c"
 
 # Auto create `.zcustom` files and load it.
 if [[ -f "${HOME}/.zcustom" ]]; then
