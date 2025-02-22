@@ -1,0 +1,4 @@
+install:
+  harvester:
+    storage_class:
+      replica_count: 1
