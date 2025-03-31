@@ -4,6 +4,8 @@
 local HTTP_PROXY_ADDR="127.0.0.1"
 # Set http proxy port.
 local HTTP_PROXY_PORT="8808"
+# Set NO_PROXY list.
+local NO_PROXY_LIST="localhost,127.0.0.1,10.1.1.1,localaddress,.localdomain,.cn,.hxstarrys.me"
 # Set zsh plugin path.
 local ZSH_PLUGIN_PATH=""
 # Set GPG tty device
@@ -314,7 +316,7 @@ alias duh='du -h'
 
 # HTTP_PROXY variable short name.
 if [[ -n "${HTTP_PROXY_ADDR}" && -n "${HTTP_PROXY_PORT}" ]]; then
-    alias proxyenv="http_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" https_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" ftp_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" rsync_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" no_proxy=\"localhost,127.0.0.1,10.1.1.1,localaddress,.localdomain\""
+    alias proxyenv="http_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" https_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" ftp_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" rsync_proxy=\"http://${HTTP_PROXY_ADDR}:${HTTP_PROXY_PORT}\" no_proxy=\"${NO_PROXY_LIST}\""
 
     # Add `proxyenv` via hit `Esc` twice.
     function add_proxyenv() {
