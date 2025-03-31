@@ -5,6 +5,6 @@
 - Location: Liaoning, China (UTC+8)
 - Blog: [blog.starry-s.moe](https://blog.starry-s.moe/)
 
-[![STARRY-S' GitHub stats](https://github-readme-stats.vercel.app/api?username=STARRY-S&show_icons=true&theme=transparent)](https://github.com/anuraghazra/github-readme-stats)
+[![STARRY-S' GitHub stats](https://github-readme-stats.vercel.app/api?username=STARRY-S&show_icons=true&theme=transparent&border_color=#232323)](https://github.com/anuraghazra/github-readme-stats)
 
-[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=STARRY-S&theme=transparent)](https://github.com/anuraghazra/github-readme-stats&layout=compact)
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=STARRY-S&theme=transparent&border_color=#232323)](https://github.com/anuraghazra/github-readme-stats&layout=compact)
