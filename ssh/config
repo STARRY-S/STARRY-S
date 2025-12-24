@@ -1,8 +1,10 @@
 Host *
     ServerAliveInterval 30
     ServerAliveCountMax 3
+    IdentityFile ~/.ssh/id_ed25519
     KexAlgorithms curve25519-sha256,ecdh-sha2-nistp521
-    HostKeyAlgorithms=+ssh-rsa
+    HostKeyAlgorithms +ssh-rsa
+    PubkeyAcceptedAlgorithms +ssh-rsa
 
 Host aur.archlinux.org
     IdentityFile ~/.ssh/id_ed25519
@@ -10,6 +12,9 @@ Host aur.archlinux.org
 
 Host github.com
     Hostname ssh.github.com
+    ServerAliveInterval 10
+    ServerAliveCountMax 3
+    ForwardAgent yes
     Port 443
     User git
     ProxyCommand nc -v -x 127.0.0.1:1808 %h %p

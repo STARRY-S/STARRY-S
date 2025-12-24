@@ -5,7 +5,9 @@ local HTTP_PROXY_ADDR="127.0.0.1"
 # Set http proxy port.
 local HTTP_PROXY_PORT="8808"
 # Set NO_PROXY list.
-local NO_PROXY_LIST="localhost,127.0.0.1,10.1.1.1,localaddress,.localdomain,.cn,.hxstarrys.me"
+local NO_PROXY_LIST="localhost,0.0.0.0,127.0.0.1,10.1.1.1,10.1.1.2,10.1.1.3,10.128.0.1,10.,10.1.2.10,10.1.2.11,10.1.2.101,10.1.3.101,10.1.0.1,10.1.2.111,"
+local NO_PROXY_LIST="$NO_PROXY_LIST,10.1.2.112,10.1.2.113,.0,.1,localaddress,.localdomain,.hxstarrys.me"
+local NO_PROXY_LIST="$NO_PROXY_LIST,.aliyuncs.com,.deepseek.com"
 # Set zsh plugin path.
 local ZSH_PLUGIN_PATH=""
 # Set GPG tty device

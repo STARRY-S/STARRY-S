@@ -1,7 +1,7 @@
 [user]
 	signingkey = F3B5DEDF56CA907C!
-	name = StarryWang
-	email = starry.wang@suse.com
+	name = STARRY-S
+	email = hxstarrys@gmail.com
 [commit]
 	gpgsign = true
 [gpg]
