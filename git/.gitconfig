@@ -1,0 +1,25 @@
+[alias]
+        graph = log --graph --abbrev-commit --decorate --date=iso8601 --format=format:'%C(bold blue)%h%C(reset) %C(white)%s%C(reset) %C(dim white)<%ae>%C(reset) %C(bold green)(%ad)%C(reset) %C(auto)%d%C(reset)'
+
+[init]
+        defaultBranch = main
+
+[user]
+	signingkey = F3B5DEDF56CA907C!
+	name = STARRY-S
+	email = hxstarrys@gmail.com
+
+[commit]
+	gpgsign = true
+
+[url "git@github.com:"]
+        insteadOf = https://github.com/
+
+[gpg]
+	program = gpg
+
+[pull]
+	rebase = true
+
+[includeIf "gitdir:~/Work/"]
+    path = ~/Work/.gitconfig

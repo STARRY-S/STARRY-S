@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# Cache OS information for performance
+readonly OS_NAME="$(uname)"
+
 # Set http proxy server.
 local HTTP_PROXY_ADDR="127.0.0.1"
 # Set http proxy port.
@@ -68,7 +71,7 @@ HISTSIZE=102400
 # Max record numbers.
 SAVEHIST=10000
 
-# Enable autocurrect.
+# Enable autocorrect.
 setopt correct
 # Share history between different zsh instances.
 setopt append_history
@@ -174,88 +177,6 @@ zstyle ":completion:*:-tilde-:*" group-order "named-directories" "path-directori
 # Restore tty status.
 # ttyctl -f
 
-# Prompt settings.
-# Last command result.
-# Zero prints nothing. Non-zero prints red number.
-local result_status=%(?::":%F{red}%?%f")
-
-# OS detection.
-function os_status() {
-    if [[ -n "${SSH_CONNECTION}" ]]; then
-        print -n "%F{blue}(ssh)%f%F{yellow}$(command uname)%f:"
-    else
-        print -n "%F{yellow}$(command uname)%f:"
-    fi
-    return 0
-}
-
-# Battery.
-# Warning: For the prompt will only refresh by pressing <ENTER>, the battery showing maybe not right.
-function battery_status() {
-    if [[ -f "/sys/class/power_supply/BAT0/capacity" ]]; then
-        local BATTERY=$(command cat /sys/class/power_supply/BAT0/capacity 2> /dev/null)
-        print -n "%F{green}${BATTERY}%%%f:"
-        return ${BATTERY}
-    elif [[ "$(command uname)" == "Darwin" ]]; then
-        local BATTERY=$(command pmset -g batt | grep -Eo "\d+%;" | cut -d% -f1)
-        print -n "%F{green}${BATTERY}%%%f:"
-        return ${BATTERY}
-    fi
-    return 0
-}
-
-# Git status.
-function git_status() {
-    # Check for git repo.
-    if [[ -n "$(command git rev-parse --short HEAD 2> /dev/null)" ]]; then
-        # Check for dirty or not.
-        if [[ -n "$(command git status --porcelain --ignore-submodules=dirty 2> /dev/null | command tail -n1)" ]]; then
-            print -n ":%F{blue}$(command git symbolic-ref --short HEAD 2> /dev/null)%f%F{yellow}*%f"
-            return 1
-        else
-            print -n ":%F{blue}$(command git symbolic-ref --short HEAD 2> /dev/null)%f"
-            return 0
-        fi
-    fi
-    return -1
-}
-
-## Background jobs.
-function jobs_status() {
-    local JOBS=$(jobs -l | command wc -l)
-    if [[ ${JOBS} -ne 0 ]]; then
-        print -n ":%F{green}${JOBS}&%f"
-        return ${JOBS}
-    fi
-    return 0
-}
-
-## Left prompt data.
-function left_prompt_data() {
-    local DATA=""
-    if [[ "${UID}" == "0" ]]; then
-        # Set hostname to red for root.
-        DATA="%F{red}%n%f@%F{red}%m%f"
-    else
-        # Set hostname to cyan for common user.
-        DATA="%F{red}%n%f@%F{cyan}%m%f"
-    fi
-
-    if [[ -n "${SSH_TTY}" || -n "${SSH_CLIENT}" ]]; then
-        # Set color to green for SSH connected mode.
-        DATA="%F{green}%n%f@%F{green}%m%f"
-    fi
-    print -n "${DATA}"
-    return 0
-}
-
-
-# Prompt.
-# LEFT PROMPT containing username `%n`, hostname `%m`, directory `%~`, git `$(git_status)`, jobs `$(jobs_status)`, result `${result_status}` and the `%#`.
-PROMPT='[$(left_prompt_data)%f:%F{yellow}%~%f$(git_status)$(jobs_status)${result_status}] %# '
-# RIGHT PROMPT containing battery `$(battery_status)`, os `$(os_status)`, date `%D{%Y-%m-%d}` and time `%D{%H:%M:%S}`.
-RPROMPT='[$(battery_status)$(os_status)%F{cyan}%D{%Y-%m-%d} %D{%H:%M:%S}%f]'
-
 # Terminal title.
 # Because terminal don't know what `%n@%m:%~` is, we need to use `print -P`, it will parse them then pass result to title.
 case "${TERM}" in
@@ -283,7 +204,7 @@ esac
 
 # Alias.
 # Colorize ls command.
-if [[ "$(command uname)" != "Darwin" && -f "/bin/ls" ]]; then
+if [[ "${OS_NAME}" != "Darwin" && -f "/bin/ls" ]]; then
     alias ls="ls --color=auto -h"
 else
     alias ls="ls -G -h"
@@ -331,8 +252,11 @@ if [[ -n "${HTTP_PROXY_ADDR}" && -n "${HTTP_PROXY_PORT}" ]]; then
 fi
 
 # A beautiful git log.
+# Check if git alias is already set to avoid repeated writes to config.
 if command -v git &> /dev/null; then
-    git config --global alias.graph "log --graph --abbrev-commit --decorate --date=iso8601 --format=format:'%C(bold blue)%h%C(reset) %C(white)%s%C(reset) %C(dim white)<%ae>%C(reset) %C(bold green)(%ad)%C(reset) %C(auto)%d%C(reset)'"
+    if ! git config --global --get alias.graph > /dev/null; then
+        git config --global alias.graph "log --graph --abbrev-commit --decorate --date=iso8601 --format=format:'%C(bold blue)%h%C(reset) %C(white)%s%C(reset) %C(dim white)<%ae>%C(reset) %C(bold green)(%ad)%C(reset) %C(auto)%d%C(reset)'"
+    fi
 fi
 
 # Systemd.
@@ -355,7 +279,7 @@ fi
 
 # Find zsh plugin path.
 if [[ -z ${ZSH_PLUGIN_PATH} ]]; then
-    if [[ "$(command uname)" == "Linux" ]]; then
+    if [[ "${OS_NAME}" == "Linux" ]]; then
         if [[ -d "/usr/share/zsh/plugins" ]]; then
             # ArchLinux.
             ZSH_PLUGIN_PATH="/usr/share/zsh/plugins"
@@ -363,7 +287,7 @@ if [[ -z ${ZSH_PLUGIN_PATH} ]]; then
             # openSUSE, ubuntu, etc...
             ZSH_PLUGIN_PATH="/usr/share"
         fi
-    elif [[ "$(command uname)" == "Darwin" ]]; then
+    elif [[ "${OS_NAME}" == "Darwin" ]]; then
         # macOS.
         ZSH_PLUGIN_PATH="/opt/homebrew/share"
     fi
@@ -371,7 +295,7 @@ fi
 
 # Enviroments.
 # Settings for Linux.
-if [[ "$(command uname)" == "Linux" ]]; then
+if [[ "${OS_NAME}" == "Linux" ]]; then
     # Settings for golang.
     if command -v go &> /dev/null; then
         if [[ -d "/usr/local/go" ]]; then
@@ -395,7 +319,15 @@ if [[ "$(command uname)" == "Linux" ]]; then
         if [[ -f "/var/lib/rancher/rke2/bin/kubectl" ]]; then
             export PATH="$PATH:/var/lib/rancher/rke2/bin"
         fi
-        source <(kubectl completion zsh)
+        # Optimize kubectl completion loading
+        if [[ -f "/usr/bin/kubectl" ]]; then
+            local KUBE_COMPLETION="${HOME}/.zkubectl_completion"
+            if [[ ! -f "$KUBE_COMPLETION" ]] || [[ $(find "$KUBE_COMPLETION" -mtime +1 2>/dev/null) ]]; then
+                kubectl completion zsh > "$KUBE_COMPLETION" &|
+            fi
+            [[ -f "$KUBE_COMPLETION" ]] && source "$KUBE_COMPLETION"
+        fi
+        source "${HOME}/.zkubectl_completion"
     fi
 
     # sbin.
@@ -412,7 +344,7 @@ if [[ "$(command uname)" == "Linux" ]]; then
 fi
 
 # Settings for macOS.
-if [[ "$(command uname)" == "Darwin" ]]; then
+if [[ "${OS_NAME}" == "Darwin" ]]; then
     # Add homebrew bin folder to path.
     if [[ -d "/opt/homebrew/bin" ]]; then
         export PATH="${PATH}:/opt/homebrew/bin"
@@ -433,7 +365,11 @@ if [[ "$(command uname)" == "Darwin" ]]; then
 
     # Kubernetes.
     if [[ -f "/opt/homebrew/bin/kubectl" || -f "/usr/local/bin/kubectl" ]]; then
-        source <(kubectl completion zsh)
+        # Optimize kubectl completion loading
+        if [[ ! -f "${HOME}/.zkubectl_completion" ]]; then
+            kubectl completion zsh > "${HOME}/.zkubectl_completion"
+        fi
+        source "${HOME}/.zkubectl_completion"
     fi
 
     # Add VSCode bin folder to PATH.
@@ -467,7 +403,7 @@ else
 fi
 
 if [[ -f "${HOME}/.alias" ]]; then
-    source "${HOME}/.zcustom"
+    source "${HOME}/.alias"
 fi
 
 # kubectl command aliases
@@ -511,4 +447,48 @@ if [[ -n "${ZSH_PLUGIN_PATH}" ]]; then
     if [[ -f "${ZSH_PLUGIN_PATH}/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
         source ${ZSH_PLUGIN_PATH}/zsh-autosuggestions/zsh-autosuggestions.zsh
     fi
+fi
+
+# ==========================================
+# Modern Tools Configuration (FZF & Starship)
+# ==========================================
+
+# --- FZF Configuration ---
+# Set FZF installation paths based on OS
+local FZF_BASE=""
+if [[ "${OS_NAME}" == "Linux" ]]; then
+    # Arch Linux default path
+    FZF_BASE="/usr/share/fzf"
+elif [[ "${OS_NAME}" == "Darwin" ]]; then
+    # macOS Homebrew path
+    FZF_BASE="/opt/homebrew/opt/fzf/shell"
+fi
+
+# Source FZF key bindings (Ctrl+T, Ctrl+R, Alt+C) and completion
+if [[ -n "${FZF_BASE}" ]]; then
+    [[ -f "${FZF_BASE}/key-bindings.zsh" ]] && source "${FZF_BASE}/key-bindings.zsh"
+    [[ -f "${FZF_BASE}/completion.zsh" ]] && source "${FZF_BASE}/completion.zsh"
+fi
+
+# FZF Layout and Preview options
+# Use 'fd' or 'rg' if available for faster listing, respecting .gitignore
+if command -v fd &> /dev/null; then
+    export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+elif command -v rg &> /dev/null; then
+    export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
+
+# Preview file content with Ctrl+T (requires 'bat' or 'cat')
+if command -v bat &> /dev/null; then
+    export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always --line-range :500 {}'"
+else
+    export FZF_CTRL_T_OPTS="--preview 'cat {}'"
+fi
+
+# --- Starship Configuration ---
+# Initialize Starship prompt
+if command -v starship &> /dev/null; then
+    eval "$(starship init zsh)"
 fi
