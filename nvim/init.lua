@@ -1,6 +1,3 @@
--- =========================================
--- Basic Settings
--- =========================================
 vim.g.mapleader = " "
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -9,6 +6,10 @@ vim.opt.shiftwidth = 4
 -- Use tab characters instead of spaces, standard for Go
 vim.opt.expandtab = false
 vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#232323" })
+vim.opt.clipboard = "unnamedplus"
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+vim.opt.termguicolors = true
 
 -- =========================================
 -- Network Proxy Configuration
@@ -40,15 +41,13 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins Setup
 -- =========================================
 require("lazy").setup({
-	-- === LSP Configuration ===
+    -- === LSP Configuration ===
     {
         "neovim/nvim-lspconfig",
         dependencies = {
             "hrsh7th/cmp-nvim-lsp",
         },
         config = function()
-            local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "lua",
                 callback = function(args)
@@ -56,6 +55,7 @@ require("lazy").setup({
                     if not root_dir then
                          root_dir = vim.fs.dirname(args.file)
                     end
+                    local capabilities = require('cmp_nvim_lsp').default_capabilities()
                     vim.lsp.start({
                         name = "lua_ls",
                         cmd = { "lua-language-server" },
@@ -84,47 +84,24 @@ require("lazy").setup({
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
         ensure_installed = {
-        	"go", "gomod", "lua",
+            "go", "gomod", "lua",
             "json", "yaml", "python", "c", "cpp",
             "markdown", "markdown_inline",
             "javascript", "typescript", "rust", "tsx",
         },
-        -- highlight = { enabled = true },
+        highlight = { enabled = false },
     },
 
-    -- === Theme (OneDark) ===
+    -- === Theme (OneDark Pro) ===
     {
-        "navarasu/onedark.nvim",
+        "olimorris/onedarkpro.nvim",
         priority = 1000,
         config = function()
-            require('onedark').setup {
-                style = 'darker',
-				-- Enable this to use LSP-based semantic highlighting
-				diagnostics = {
-					undercurl = true,
-					background = false,
-				},
-            }
-            vim.cmd.colorscheme 'onedark'
+            vim.cmd("colorscheme onedark")
         end,
     },
 
-	{
-    	'ray-x/aurora',
-		priority = 1300,
-    	init = function()
-      		vim.g.aurora_italic = 1
-      		vim.g.aurora_transparent = 1
-      		vim.g.aurora_bold = 1
-    	end,
-    	config = function()
-        	vim.cmd.colorscheme "aurora"
-        	-- override defaults
-        	vim.api.nvim_set_hl(0, '@number', {fg='#e933e3'})
-    	end
-    },
-
-	-- === Theme: Catppuccin ===
+    -- === Theme: Catppuccin ===
     {
         "catppuccin/nvim",
         name = "catppuccin",
@@ -147,7 +124,7 @@ require("lazy").setup({
         end,
     },
 
-	-- === Go Tools (ray-x/go.nvim) ===
+    -- === Go Tools (ray-x/go.nvim) ===
     {
         "ray-x/go.nvim",
         dependencies = {
@@ -156,31 +133,39 @@ require("lazy").setup({
             "nvim-treesitter/nvim-treesitter",
         },
         config = function()
+            local capabilities = require('cmp_nvim_lsp').default_capabilities()
             require("go").setup({
                 -- Disable internal LSP setup to prevent conflict with Mason
-                lsp_cfg = true,
+                lsp_cfg = {
+                    capabilities = capabilities,
+                    settings = {
+                        gopls = {
+                            -- Force enable semantic tokens for rich highlighting
+                            semanticTokens = true,
+                            -- Enable more aggressive code analysis
+                            analyses = {
+                                ST1000 = false,
+                                unusedparams = true,
+                                shadow = true,
+                            },
+                        },
+                    },
+                },
 
-				lsp_semantic_highlights = true,
-
-				lsp_on_attach = function(client, bufnr)
-				end,
-
-				gopls_cmd = nil, -- use system gopls automatically
-                -- Disable inlay hints to use Neovim's native ones (optional)
+                lsp_semantic_highlights = false,
                 lsp_inlay_hints = { enable = false },
             })
 
             -- Auto-Format on save (using goimports)
             local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
             vim.api.nvim_create_autocmd("BufWritePre", {
-                pattern = "*.go",
+                pattern = "*.go:",
                 callback = function()
                     require("go.format").goimports()
                 end,
                 group = format_sync_grp,
             })
         end,
-        event = { "CmdlineEnter" },
         ft = { "go", "gomod" },
         build = ':lua require("go.install").update_all_sync()'
     },
@@ -198,9 +183,39 @@ require("lazy").setup({
         lazy = false,
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = function()
+            -- Custom sort function to sort folders first, then by numeric prefix naturally
+            local function sort_by_number(nodes)
+                table.sort(nodes, function(a, b)
+                    -- Prioritize directories over other file types
+                    if a.type ~= b.type then
+                        if a.type == "directory" then
+                            return true
+                        elseif b.type == "directory" then
+                            return false
+                        end
+                    end
+
+                    -- Extract the leading digits from the file or folder name
+                    local num_a = tonumber(string.match(a.name, "^%d+"))
+                    local num_b = tonumber(string.match(b.name, "^%d+"))
+
+                    -- If both names start with numbers, compare them mathematically
+                    if num_a and num_b then
+                        if num_a ~= num_b then
+                            return num_a < num_b
+                        end
+                    end
+
+                    -- Fallback to standard alphabetical comparison
+                    return a.name < b.name
+                end)
+            end
             require("nvim-tree").setup({
                 view = { width = 30 },
                 renderer = { group_empty = true },
+                sort = {
+                      sorter = sort_by_number,
+                },
             })
         end,
         keys = {
@@ -212,10 +227,102 @@ require("lazy").setup({
     {
         "akinsho/toggleterm.nvim",
         version = "*",
-        config = true,
+        config = function()
+            require("toggleterm").setup({
+                -- Use a floating window instead of a horizontal split
+                direction = "float",
+                float_opts = {
+                    -- Add a curved border around the terminal
+                    border = "curved",
+                },
+            })
+        end,
         keys = {
             { "<C-\\>", "<cmd>ToggleTerm<cr>", desc = "Toggle Terminal" }
         }
+    },
+
+    -- === Statusline (Lualine) ===
+    {
+        "nvim-lualine/lualine.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("lualine").setup({
+                options = {
+                    -- Automatically match your current colorscheme (onedark, etc.)
+                    theme = 'auto',
+                    -- Use modern powerline separators
+                    component_separators = { left = '', right = ''},
+                    section_separators = { left = '', right = ''},
+                    -- Use a single unified statusline for the entire Neovim window
+                    globalstatus = true,
+                },
+                sections = {
+                    lualine_c = {
+                        {
+                            'filename',
+                            -- Rename ugly terminal URLs to a clean string
+                            fmt = function(name)
+                                if name:match("^term://") then
+                                    return "Terminal 💻"
+                                end
+                                return name
+                            end,
+                        }
+                    }
+                }
+            })
+        end
+    },
+
+    -- === Git Integration (Gitsigns) ===
+    {
+        "lewis6991/gitsigns.nvim",
+        -- Load plugin only when opening a file to optimize startup time
+        event = { "BufReadPre", "BufNewFile" },
+        config = function()
+            require("gitsigns").setup({
+                -- Enable inline git blame virtual text
+                -- Shows who wrote the line and when, right next to the code
+                current_line_blame = true,
+                current_line_blame_opts = {
+                    virt_text = true,
+                    virt_text_pos = "eol",
+                    -- Delay in milliseconds before showing the blame text
+                    delay = 500,
+                },
+                -- Set up keymaps only for buffers that are tracked by git
+                on_attach = function(bufnr)
+                    local gs = package.loaded.gitsigns
+
+                    local function map(mode, l, r, opts)
+                        opts = opts or {}
+                        opts.buffer = bufnr
+                        vim.keymap.set(mode, l, r, opts)
+                    end
+
+                    -- Jump to the next modified block of code
+                    map("n", "]c", function()
+                        if vim.wo.diff then return "]c" end
+                        vim.schedule(function() gs.next_hunk() end)
+                        return "<Ignore>"
+                    end, { expr = true, desc = "Jump to next git hunk" })
+
+                    -- Jump to the previous modified block of code
+                    map("n", "[c", function()
+                        if vim.wo.diff then return "[c" end
+                        vim.schedule(function() gs.prev_hunk() end)
+                        return "<Ignore>"
+                    end, { expr = true, desc = "Jump to previous git hunk" })
+
+                    -- Open a floating window to see what exactly was changed
+                    map("n", "<leader>hp", gs.preview_hunk, { desc = "Preview git hunk" })
+
+                    -- Revert the changes in the current block
+                    map("n", "<leader>hr", gs.reset_hunk, { desc = "Reset git hunk" })
+                end
+            })
+        end
     },
 
     -- === Markdown Rendering ===
@@ -318,32 +425,17 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
--- Highlight trailing whitespace in red
--- Ignore special buffers like terminal or file explorer
-vim.api.nvim_set_hl(0, "TrailingSpace", { bg = "#753e3e" })
-vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufEnter" }, {
-    pattern = "*",
-    callback = function()
-        local ignore_buftypes = { "terminal", "nofile", "prompt", "quickfix" }
-        local ignore_filetypes = { "alpha", "dashboard", "NvimTree", "TelescopePrompt", "mason", "lazy" }
+vim.o.list = true
+vim.o.listchars = 'tab:» ,lead:·,trail:·'
 
-        -- Check if current buffer should be ignored
-        if vim.tbl_contains(ignore_buftypes, vim.bo.buftype) or vim.tbl_contains(ignore_filetypes, vim.bo.filetype) then
-            pcall(vim.fn.matchdelete, vim.w.trailing_match_id)
-            return
-        end
-
-        -- Clean up previous match to avoid duplicates
-        if vim.w.trailing_match_id then
-            pcall(vim.fn.matchdelete, vim.w.trailing_match_id)
-            vim.w.trailing_match_id = nil
-        end
-
-        -- Apply high priority highlighting
-        local id = vim.fn.matchadd("TrailingSpace", "\\s\\+$", 100)
-        vim.w.trailing_match_id = id
-    end
-})
+vim.api.nvim_set_hl(0, 'TrailingWhitespace', { bg='#753e3e' })
+vim.api.nvim_create_autocmd('BufEnter', {
+    pattern = '*',
+    command = [[
+        syntax clear TrailingWhitespace |
+        syntax match TrailingWhitespace "\_s\+$"
+    ]]}
+)
 
 -- Auto-trim trailing whitespace on save
 -- Exception: Skip markdown files to preserve hard breaks
