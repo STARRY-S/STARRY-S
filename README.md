@@ -1,14 +1,10 @@
 ## Hi there, I'm Starry
 
-- **Languages**: `zh_CN`, `en_US`
-- **PGP Fingerprint**: `E8F9 2E5A C1AE 0B0F 4421  4012 9190 2000 F0C2 9BC2`
-- **Interests**: Open-Source, Arch Linux, Container, Kubernetes, Go
+Backend / Platform Engineer focused on Go, Linux, Kubernetes and cloud-native systems.
 
-## My Tech Stack
-
-- **Languages**: `Golang`, `C`, `Python`, `JavaScript`
-- **Platforms/Technologies**: `Linux`, `Kubernetes`, `Containers`, `Cloud Native`
-- **Tools**: `Git`, `VSCode`, `Vim`
+- Interested in open source, Arch Linux, containers, and cloud-native infrastructure.
+- Languages: `Go`, `C`, `Python`, `JavaScript`
+- Tools: `Git`, `VSCode`, `Vim`
 
 <!-- ## GitHub Stats 📊
 
